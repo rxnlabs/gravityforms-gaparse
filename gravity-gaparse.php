@@ -1,11 +1,14 @@
 <?php
-/*
-Plugin Name: Gravity Forms - GA Parse Add-On
-Plugin URI: http://example.com/
-Description: Grab the Google Analytics data for form submissions including campaign source, campaign name, campaign medium among other data 
-Version: 0.1
-Author: De"Yonte W.
-Author URI: http://example.com/
+/**
+ * Extends Gravity Forms to get the Google Analytics data for form submissions
+ * @package WordPress
+ * 
+ * Plugin Name: Gravity Forms - GA Parse Add-On
+ * Plugin URI: http://example.com/
+ * Description: Grab the Google Analytics data for form submissions including campaign source, campaign name, campaign medium among other data 
+ * Version: 0.1
+ * Author: De"Yonte W.
+ * Author URI: http://example.com/
 */
 
 /**
@@ -29,17 +32,21 @@ Author URI: http://example.com/
  * GNU General Public License for more details.
  * **********************************************************************
  */
+// File Security Check
+if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename( $_SERVER['SCRIPT_FILENAME'] ) ) {
+    die ( 'You do not have sufficient permissions to access this page!' );
+}
+
 require("admin/class.gaparse.php");
 
 /**
- * Extends Gravity Forms to get the Google Analytics data for form submissions
- * @package WordPress
+ * Class to provide Google Analytics parsing for Gravity Forms
  * @subpackage Gravity Forms
  * @category Plugin   
  * @author De'Yonte W.
  */
 class GravityGAParse extends GA_Parse{
-		
+	
 	public $ga_fields;
 
 	/**
@@ -270,6 +277,16 @@ class GravityGAParse extends GA_Parse{
 	public function front_hooks(){
 		add_action("gform_field_css_class", array($this,"css_class"), 10, 3);
 		add_action("gform_pre_submission", array($this,"get_values"));
+		add_action("gform_enqueue_scripts", array($this,'load_css'), 10, 2);
+	}
+
+	public function load_css(){?>
+		<style type="text/css">
+			.gform_hidden{
+				display: none!important;
+			}
+		</style>
+	<?php 
 	}
 
 	/**
