@@ -37,8 +37,8 @@ if ( ! empty( $_SERVER['SCRIPT_FILENAME'] ) && basename( __FILE__ ) == basename(
     die ( 'You do not have sufficient permissions to access this page!' );
 }
 
-require("admin/class.gaparse.php");
-
+if( !class_exists('GA_Parse') )
+	require("admin/class.gaparse.php");
 /**
  * Class to provide Google Analytics parsing for Gravity Forms
  * @subpackage Gravity Forms
@@ -296,17 +296,17 @@ class GravityGAParse extends GA_Parse{
 	 * @param object $form 
 	 */
 	public function get_values($form){
-
+	
 		foreach( $_POST as $key=>$field ):
 
 			if( $field == 'ga_campaign_source' )
-				$_POST[$key] = $this->campaign_source;
+				$_POST[$key] = (isset($_GET['utm_source'])?$_GET['utm_source']:$this->campaign_source);
 			elseif( $field == 'ga_campaign_name' )
-				$_POST[$key] = $this->campaign_name;
+				$_POST[$key] = (isset($_GET['utm_campaign'])?$_GET['utm_campaign']:$this->campaign_name);
 			elseif( $field == 'ga_campaign_medium' )
-				$_POST[$key] = $this->campaign_medium;
+				$_POST[$key] = (isset($_GET['utm_medium'])?$_GET['utm_medium']:$this->campaign_medium);
 			elseif( $field == 'ga_campaign_content' )
-				$_POST[$key] = $this->campaign_content;
+				$_POST[$key] = (isset($_GET['utm_content'])?$_GET['utm_content']:$this->campaign_content);
 			elseif( $field == 'ga_campaign_term' )
 				$_POST[$key] = $this->campaign_term;
 			elseif( $field == 'ga_first_visit' )
